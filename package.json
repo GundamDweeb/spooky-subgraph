@@ -6,6 +6,7 @@
   "scripts": {
     "codegen": "graph codegen --output-dir src/types/",
     "build": "graph build",
+    "deploy-hosted": "graph deploy --product hosted-service gundamdweeb/spookyswap",
     "create-local": "graph create eerieeight/spooky-swap-exchange --node http://127.0.0.1:8020",
     "deploy-local": "graph deploy eerieeight/spookyswap --debug --ipfs http://localhost:5001 --node http://127.0.0.1:8020",
     "deploy": "graph deploy eerieeight/spookyswap --ipfs https://api.thegraph.com/ipfs/ --node https://api.thegraph.com/deploy/ --debug",
@@ -13,13 +14,7 @@
     "watch-local": "graph deploy graphprotocol/spookyswap --watch --debug --node http://127.0.0.1:8020/ --ipfs http://localhost:5001"
   },
   "devDependencies": {
-    "@graphprotocol/graph-cli": "^0.16.0",
-    "@graphprotocol/graph-ts": "^0.16.0",
-    "@typescript-eslint/eslint-plugin": "^2.0.0",
-    "@typescript-eslint/parser": "^2.0.0",
-    "eslint": "^6.2.2",
-    "eslint-config-prettier": "^6.1.0",
-    "prettier": "^1.18.2",
-    "typescript": "^3.5.2"
+    "@graphprotocol/graph-cli": "0.55.0",
+    "@graphprotocol/graph-ts": "0.31.0"
   }
 }

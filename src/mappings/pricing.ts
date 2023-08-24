@@ -5,16 +5,15 @@ import { ZERO_BD, factoryContract, ADDRESS_ZERO, ONE_BD } from './helpers'
 
 const WETH_ADDRESS = '0x21be370d5312f44cb42ce377bc9b8a0cef1a4c83'
 const USDC_WETH_PAIR = '0x2b4c76d0dc16be1c31d4c1dc53bf9b45987fc75c' // created
-const DAI_WETH_PAIR = '0xe120ffbda0d14f3bb6d6053e90e63c572a66a428' // created block 
-const USDT_WETH_PAIR = '0x5965e53aa80a0bcf1cd6dbdd72e6a9b2aa047410' // created block 
+const DAI_WETH_PAIR = '0xe120ffbda0d14f3bb6d6053e90e63c572a66a428' // created block
+const USDT_WETH_PAIR = '0x5965e53aa80a0bcf1cd6dbdd72e6a9b2aa047410' // created block
 
 export function getEthPriceInUSD(): BigDecimal {
   //For now we will only use USDC_WETH pair for ETH prices
-  let usdcPair = Pair.load(USDC_WETH_PAIR);
+  let usdcPair = Pair.load(USDC_WETH_PAIR)
   if (usdcPair !== null) {
     return usdcPair.token0Price
-  }
-  else {
+  } else {
     return ZERO_BD
   }
 }
@@ -23,7 +22,7 @@ export function getEthPriceInUSD(): BigDecimal {
 let WHITELIST: string[] = [
   '0x21be370d5312f44cb42ce377bc9b8a0cef1a4c83', // wftm
   '0x04068da6c83afcfa0e13ba15a6696662335d5b75', // USDC
-  '0x8d11ec38a3eb5e956b052f67da8bdc9bef8abf3e', // DAI
+  '0x8d11ec38a3eb5e956b052f67da8bdc9bef8abf3e' // DAI
 ]
 
 // minimum liquidity required to count towards tracked volume for pairs with small # of Lps
@@ -44,13 +43,13 @@ export function findEthPerToken(token: Token): BigDecimal {
   for (let i = 0; i < WHITELIST.length; ++i) {
     let pairAddress = factoryContract.getPair(Address.fromString(token.id), Address.fromString(WHITELIST[i]))
     if (pairAddress.toHexString() != ADDRESS_ZERO) {
-      let pair = Pair.load(pairAddress.toHexString())
+      let pair = Pair.load(pairAddress.toHexString())!
       if (pair.token0 == token.id && pair.reserveETH.gt(MINIMUM_LIQUIDITY_THRESHOLD_ETH)) {
-        let token1 = Token.load(pair.token1)
+        let token1 = Token.load(pair.token1)!
         return pair.token1Price.times(token1.derivedETH as BigDecimal) // return token1 per our token * Eth per token 1
       }
       if (pair.token1 == token.id && pair.reserveETH.gt(MINIMUM_LIQUIDITY_THRESHOLD_ETH)) {
-        let token0 = Token.load(pair.token0)
+        let token0 = Token.load(pair.token0)!
         return pair.token0Price.times(token0.derivedETH as BigDecimal) // return token0 per our token * ETH per token 0
       }
     }
@@ -72,8 +71,8 @@ export function getTrackedVolumeUSD(
   bundle: Bundle
 ): BigDecimal {
   // let bundle = Bundle.load('1')
-  let price0 = token0.derivedETH.times(bundle.ethPrice)
-  let price1 = token1.derivedETH.times(bundle.ethPrice)
+  let price0 = token0.derivedETH!.times(bundle.ethPrice)
+  let price1 = token1.derivedETH!.times(bundle.ethPrice)
 
   // both are whitelist tokens, take average of both amounts
   if (WHITELIST.includes(token0.id) && WHITELIST.includes(token1.id)) {
@@ -111,8 +110,8 @@ export function getTrackedLiquidityUSD(
   bundle: Bundle
 ): BigDecimal {
   // let bundle = Bundle.load('1')
-  let price0 = token0.derivedETH.times(bundle.ethPrice)
-  let price1 = token1.derivedETH.times(bundle.ethPrice)
+  let price0 = token0.derivedETH!.times(bundle.ethPrice)
+  let price1 = token1.derivedETH!.times(bundle.ethPrice)
 
   // both are whitelist tokens, take average of both amounts
   if (WHITELIST.includes(token0.id) && WHITELIST.includes(token1.id)) {
