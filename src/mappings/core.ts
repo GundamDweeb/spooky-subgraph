@@ -47,6 +47,7 @@ export function handleTransfer(event: Transfer): void {
   // get pair and load contract
   let pair = Pair.load(event.address.toHexString())!
   let pairContract = PairContract.bind(event.address)
+  // GET RID OF THIS SHIT TODO KENT
 
   // liquidity token amount being transfered
   let value = convertTokenToDecimal(event.params.value, BI_18)
@@ -192,6 +193,12 @@ export function handleTransfer(event: Transfer): void {
     transaction.burns = burns
     // transaction.save()
   }
+  if(from.toHexString() == ADDRESS_ZERO){
+    let fromUserLiquidityPosition = createLiquidityPosition(event.address, from)
+    fromUserLiquidityPosition.liquidityTokenBalance = convertTokenToDecimal(event.params.value, BI_18)
+    fromUserLiquidityPosition.save()
+    createLiquiditySnapshot(fromUserLiquidityPosition, event)
+  }
 
   if (from.toHexString() != ADDRESS_ZERO && from.toHexString() != pair.id) {
     let fromUserLiquidityPosition = createLiquidityPosition(event.address, from)
@@ -237,7 +244,7 @@ export function handleSync(event: Sync): void {
   let bundle = Bundle.load('1')!
   bundle.ethPrice = getEthPriceInUSD()
   bundle.save()
-
+  //TODO CHANGES KENT
   token0.derivedETH = findEthPerToken(token0 as Token)
   token1.derivedETH = findEthPerToken(token1 as Token)
   // token0.save()
