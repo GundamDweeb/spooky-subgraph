@@ -26,7 +26,14 @@ import {
 } from './helpers'
 
 function isCompleteMint(mintId: string): boolean {
-  return MintEvent.load(mintId)!.sender !== null // sufficient checks
+  let mintEvent = MintEvent.load(mintId);
+  if(!mintEvent){
+    return false
+  }
+  if(!mintEvent.sender){
+    return false
+  }
+  return true // sufficient checks
 }
 
 export function handleTransfer(event: Transfer): void {
@@ -54,7 +61,7 @@ export function handleTransfer(event: Transfer): void {
 
   // get or create transaction
   let transaction = Transaction.load(transactionHash)
-  if (transaction === null) {
+  if (!transaction) {
     transaction = new Transaction(transactionHash)
     transaction.blockNumber = event.block.number
     transaction.timestamp = event.block.timestamp
@@ -71,7 +78,7 @@ export function handleTransfer(event: Transfer): void {
     pair.save()
 
     // create new mint if no mints so far or if last one is done already
-    if (mints.length === 0 || isCompleteMint(mints[mints.length - 1])) {
+    if (mints.length == 0 || isCompleteMint(mints[mints.length - 1])) {
       let mint = new MintEvent(
         event.transaction.hash
           .toHexString()
@@ -163,7 +170,7 @@ export function handleTransfer(event: Transfer): void {
     }
 
     // if this logical burn included a fee mint, account for this
-    if (mints.length !== 0 && !isCompleteMint(mints[mints.length - 1])) {
+    if (mints.length != 0 && !isCompleteMint(mints[mints.length - 1])) {
       let mint = MintEvent.load(mints[mints.length - 1])!
       burn.feeTo = mint.to
       burn.feeLiquidity = mint.liquidity
@@ -288,7 +295,7 @@ export function handleSync(event: Sync): void {
 
 export function handleMint(event: Mint): void {
   let transaction = Transaction.load(event.transaction.hash.toHexString())
-  if (transaction === null) {
+  if (!transaction) {
     transaction = new Transaction(event.transaction.hash.toHexString())
     transaction.blockNumber = event.block.number
     transaction.timestamp = event.block.timestamp
@@ -359,7 +366,7 @@ export function handleBurn(event: Burn): void {
   let transaction = Transaction.load(event.transaction.hash.toHexString())
 
   // safety check
-  if (transaction === null) {
+  if (!transaction) {
     return
   }
 
@@ -497,7 +504,7 @@ export function handleSwap(event: Swap): void {
   uniswap.save()
 
   let transaction = Transaction.load(event.transaction.hash.toHexString())
-  if (transaction === null) {
+  if (!transaction) {
     transaction = new Transaction(event.transaction.hash.toHexString())
     transaction.blockNumber = event.block.number
     transaction.timestamp = event.block.timestamp
@@ -527,7 +534,7 @@ export function handleSwap(event: Swap): void {
   swap.from = event.transaction.from
   swap.logIndex = event.logIndex
   // use the tracked amount if we have it
-  swap.amountUSD = trackedAmountUSD === ZERO_BD ? derivedAmountUSD : trackedAmountUSD
+  swap.amountUSD = trackedAmountUSD == ZERO_BD ? derivedAmountUSD : trackedAmountUSD
   swap.save()
 
   // update the transaction

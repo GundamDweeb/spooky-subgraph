@@ -16,7 +16,7 @@ import {
 export function handleNewPair(event: PairCreated): void {
   // load factory (create if first exchange)
   let factory = UniswapFactory.load(FACTORY_ADDRESS)
-  if (factory === null) {
+  if (!factory) {
     factory = new UniswapFactory(FACTORY_ADDRESS)
     factory.pairCount = 0
     factory.totalVolumeETH = ZERO_BD
@@ -39,14 +39,14 @@ export function handleNewPair(event: PairCreated): void {
   let token1 = Token.load(event.params.token1.toHexString())
 
   // fetch info if null
-  if (token0 === null) {
+  if (!token0) {
     token0 = new Token(event.params.token0.toHexString())
     token0.symbol = fetchTokenSymbol(event.params.token0)
     token0.name = fetchTokenName(event.params.token0)
     token0.totalSupply = fetchTokenTotalSupply(event.params.token0)
     let decimals = fetchTokenDecimals(event.params.token0)
     // bail if we couldn't figure out the decimals
-    if (decimals === null) {
+    if (!decimals) {
       log.debug('mybug the decimal on token 0 was null', [])
       return
     }
@@ -62,7 +62,7 @@ export function handleNewPair(event: PairCreated): void {
   }
 
   // fetch info if null
-  if (token1 === null) {
+  if (!token1) {
     token1 = new Token(event.params.token1.toHexString())
     token1.symbol = fetchTokenSymbol(event.params.token1)
     token1.name = fetchTokenName(event.params.token1)
@@ -70,7 +70,7 @@ export function handleNewPair(event: PairCreated): void {
     let decimals = fetchTokenDecimals(event.params.token1)
 
     // bail if we couldn't figure out the decimals
-    if (decimals === null) {
+    if (decimals == null) {
       return
     }
     token1.decimals = decimals

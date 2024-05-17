@@ -107,15 +107,19 @@ export function fetchTokenTotalSupply(tokenAddress: Address): BigInt {
   return totalSupplyValue
 }
 
-export function fetchTokenDecimals(tokenAddress: Address): BigInt {
+
+export function fetchTokenDecimals(tokenAddress: Address): BigInt | null {
   let contract = ERC20.bind(tokenAddress)
   // try types uint8 for decimals
-  let decimalValue = BigInt.fromI32(0)
   let decimalResult = contract.try_decimals()
+
   if (!decimalResult.reverted) {
-    decimalValue = BigInt.fromI32(decimalResult.value)
-  }
-  return decimalValue
+    if (decimalResult.value.lt(BigInt.fromI32(255))) {
+      return decimalResult.value
+    }
+  } 
+
+  return null
 }
 
 export function createLiquidityPosition(exchange: Address, user: Address): LiquidityPosition {
@@ -124,7 +128,7 @@ export function createLiquidityPosition(exchange: Address, user: Address): Liqui
     .concat('-')
     .concat(user.toHexString())
   let liquidityTokenBalance = LiquidityPosition.load(id)
-  if (liquidityTokenBalance === null) {
+  if (!liquidityTokenBalance) {
     let pair = Pair.load(exchange.toHexString())
     if (pair) {
       pair.liquidityProviderCount = pair.liquidityProviderCount.plus(ONE_BI)
@@ -136,13 +140,13 @@ export function createLiquidityPosition(exchange: Address, user: Address): Liqui
       pair.save()
     }
   }
-  if (liquidityTokenBalance === null) log.error('LiquidityTokenBalance is null', [id])
+  if (!liquidityTokenBalance) log.error('LiquidityTokenBalance is null', [id])
   return liquidityTokenBalance as LiquidityPosition
 }
 
 export function createUser(address: Address): void {
   let user = User.load(address.toHexString())
-  if (user === null) {
+  if (!user) {
     user = new User(address.toHexString())
     user.usdSwapped = ZERO_BD
     user.save()
