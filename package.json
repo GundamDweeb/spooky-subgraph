@@ -14,7 +14,7 @@
     "watch-local": "graph deploy graphprotocol/spookyswap --watch --debug --node http://127.0.0.1:8020/ --ipfs http://localhost:5001"
   },
   "devDependencies": {
-    "@graphprotocol/graph-cli": "0.55.0",
-    "@graphprotocol/graph-ts": "0.31.0"
+    "@graphprotocol/graph-cli": "^0.67.2",
+    "@graphprotocol/graph-ts": "^0.32.0"
   }
 }
