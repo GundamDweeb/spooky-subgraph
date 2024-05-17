@@ -114,8 +114,8 @@ export function fetchTokenDecimals(tokenAddress: Address): BigInt | null {
   let decimalResult = contract.try_decimals()
 
   if (!decimalResult.reverted) {
-    if (decimalResult.value.lt(BigInt.fromI32(255))) {
-      return decimalResult.value
+    if (decimalResult.value < 255) {
+      return BigInt.fromI32(decimalResult.value)
     }
   } 
 

@@ -52,9 +52,11 @@ export function handleTransfer(event: Transfer): void {
   // createUser(to)
 
   // get pair and load contract
-  let pair = Pair.load(event.address.toHexString())!
+  let pair = Pair.load(event.address.toHexString())
+  if(!pair){
+    return
+  }
   let pairContract = PairContract.bind(event.address)
-  // GET RID OF THIS SHIT TODO KENT
 
   // liquidity token amount being transfered
   let value = convertTokenToDecimal(event.params.value, BI_18)

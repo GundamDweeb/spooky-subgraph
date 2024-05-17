@@ -54,6 +54,11 @@ type Token @entity {
   pairQuote: [Pair!]! @derivedFrom(field: "token1")
 }
 
+type PairTokenLookup @entity(immutable: true) {
+  id: ID!
+  pair: Pair!
+}
+
 type Pair @entity {
   # pair address
   id: ID!

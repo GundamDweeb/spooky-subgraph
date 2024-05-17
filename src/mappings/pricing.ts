@@ -1,5 +1,5 @@
 /* eslint-disable prefer-const */
-import { Pair, Token, Bundle } from '../types/schema'
+import { Pair, Token, Bundle, PairTokenLookup } from '../types/schema'
 import { BigDecimal, Address, BigInt } from '@graphprotocol/graph-ts/index'
 import { ZERO_BD, factoryContract, ADDRESS_ZERO, ONE_BD } from './helpers'
 
@@ -42,10 +42,13 @@ export function findEthPerToken(token: Token): BigDecimal {
   // loop through whitelist and check if paired with any
   for (let i = 0; i < WHITELIST.length; ++i) {
     //LOOKUP BETWEEN two tokens and pairaddress
-    let pairAddress = factoryContract.try_getPair(Address.fromString(token.id), Address.fromString(WHITELIST[i]))
-    if(!pairAddress.reverted){
-      if (pairAddress.value.toHexString() != ADDRESS_ZERO) {
-        let pair = Pair.load(pairAddress.value.toHexString())
+    let pairLookup = PairTokenLookup.load(
+      token.id.concat('-').concat(Address.fromString(WHITELIST[i]).toHexString()),
+    )
+    if(pairLookup){
+      let pairId = pairLookup.pair
+      if (pairId != ADDRESS_ZERO) {
+        let pair = Pair.load(pairId)
         if(pair){
           if (pair.token0 == token.id && pair.reserveETH.gt(MINIMUM_LIQUIDITY_THRESHOLD_ETH)) {
             let token1 = Token.load(pair.token1)!
