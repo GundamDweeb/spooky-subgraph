@@ -200,12 +200,6 @@ export function handleTransfer(event: Transfer): void {
     transaction.burns = burns
     // transaction.save()
   }
-  if(from.toHexString() == ADDRESS_ZERO){
-    let fromUserLiquidityPosition = createLiquidityPosition(event.address, from)
-    fromUserLiquidityPosition.liquidityTokenBalance = convertTokenToDecimal(event.params.value, BI_18)
-    fromUserLiquidityPosition.save()
-    createLiquiditySnapshot(fromUserLiquidityPosition, event)
-  }
 
   if (from.toHexString() != ADDRESS_ZERO && from.toHexString() != pair.id) {
     let fromUserLiquidityPosition = createLiquidityPosition(event.address, from)
