@@ -542,7 +542,10 @@ export function handleSwap(event: Swap): void {
   // pair.save()
 
   // update global values, only used tracked amounts for volume
-  let uniswap = UniswapFactory.load(FACTORY_ADDRESS)!
+  let uniswap = UniswapFactory.load(FACTORY_ADDRESS)
+  if(!uniswap){
+    return
+  }
   uniswap.totalVolumeUSD = uniswap.totalVolumeUSD.plus(trackedAmountUSD)
   uniswap.totalVolumeETH = uniswap.totalVolumeETH.plus(trackedAmountETH)
   uniswap.untrackedVolumeUSD = uniswap.untrackedVolumeUSD.plus(derivedAmountUSD)
